@@ -2,6 +2,12 @@
 problem statement 
 
 Find the top 3 customers by total transaction amount in each branch, only for customers whose total balance is above the average balance of all customers.
+First, I joined the customers and transactions tables using customer_id to combine customer details with their transaction data.
+Then, I used aggregation (SUM) along with GROUP BY to calculate the total transaction amount for each customer.
+After that, I calculated the average balance of all customers using a subquery with AVG(balance).
+Next, I filtered the data to include only those customers whose balance is greater than the average balance, focusing on high-value customers.
+Then, I applied a window function RANK(), partitioning by branch_id and ordering by total transaction amount in descending order, to rank customers within each branch.
+Finally, I selected only those customers whose rank is less than or equal to 3, which gives the top 3 customers from each branch.
 
 
 

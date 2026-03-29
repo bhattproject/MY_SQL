@@ -73,5 +73,53 @@ Space Complexity: 1
 Performance: Low to Moderate. It can be slow because the inner query might run once for every row in the outer table (row-by-row overhead
 '''
 ================================
+Implicit Join (Comma Syntax)
+This is an older style that was standard decades ago. Most modern databases internally convert this into a standard JOIN. 
+Reddit
+Reddit
+ +1
+sql
+SELECT e.name AS employee
+FROM Employee e, Employee m
+WHERE e.manager_id = m.id AND e.salary > m.salary;
+Use code with caution.
 
+Time Complexity: 
+
+Space Complexity: 
+
+.
+Performance: Moderate. While usually converted to a join, it is considered poor practice today because it is easier to accidentally create a "Cartesian Product" (joining every row to every other row), which is 
+
+.
+4. Window Functions (Advanced)
+Some developers use analytic functions to "pre-calculate" values, though it is usually overkill for this specific problem. 
+Stack Overflow
+Stack Overflow
+ +1
+sql
+SELECT name
+FROM (
+    SELECT name, salary, 
+           MAX(salary) OVER(PARTITION BY id) as manager_salary
+    FROM Employee
+) as temp
+WHERE salary > manager_salary;
+Use code with caution.
+
+Time Complexity: 
+
+Space Complexity: 
+.
+Performance: High. Great for complex reporting, but slightly more "expensive" in memory than a simple join.
+5. Using the EXISTS Clause
+This checks for the existence of a manager who fits the criteria. 
+sql
+SELECT e.name
+FROM Employee e
+WHERE EXISTS (
+    SELECT 1 FROM Employee m 
+    WHERE m.id = e.manager_id AND e.salary > m.salary
+);
+Use code with caution.
 

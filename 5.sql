@@ -75,6 +75,41 @@ WHERE NOT EXISTS (
 );
 
 
+SELECT c.customer_id
+FROM Customers c
+CROSS JOIN Products p
+LEFT JOIN Orders o 
+    ON o.customer_id = c.customer_id 
+   AND o.product_id = p.product_id
+GROUP BY c.customer_id
+HAVING COUNT(o.product_id) = COUNT(p.product_id);
 
++-------------+------------+------------+
+| customer_id | product_id | matched?   |
++-------------+------------+------------+
+| 1           | A          | ✔          |
+| 1           | B          | ✔          |
+| 1           | C          | ✔          |
+| 2           | A          | ✔          |
+| 2           | B          | ✔          |
+| 2           | C          | ❌ NULL    |
+| 3           | A          | ✔          |
+| 3           | B          | ❌ NULL    |
+| 3           | C          | ✔          |
+
+
+-------------------------------------
+(1, A)
+(1, A)  if duplicates
+
+SELECT c.customer_id
+FROM Customers c
+CROSS JOIN Products p
+LEFT JOIN Orders o 
+    ON o.customer_id = c.customer_id 
+   AND o.product_id = p.product_id
+GROUP BY c.customer_id
+HAVING COUNT(DISTINCT o.product_id) = COUNT(DISTINCT p.product_id);
+==============================================
 
 

@@ -94,3 +94,66 @@ FROM grouped
 GROUP BY user_id, grp
 HAVING COUNT(*) >= 5;
 ===============================
+
+Instead of:
+
+REMOVE duplicates first
+
+
+We do:
+
+👉 Assign row number per (user_id, login_date)
+👉 Keep only first occurrence
+
+WITH dedup AS (
+    SELECT 
+        user_id,
+        login_date,
+        ROW_NUMBER() OVER (
+            PARTITION BY user_id, login_date
+            ORDER BY login_date
+        ) AS dup_rn
+    FROM Logins
+),
+filtered AS (
+    SELECT user_id, login_date
+    FROM dedup
+    WHERE dup_rn = 1
+),
+numbered AS (
+    SELECT 
+        user_id,
+        login_date,
+        ROW_NUMBER() OVER (
+            PARTITION BY user_id 
+            ORDER BY login_date
+        ) AS rn
+    FROM filtered
+),
+grouped AS (
+    SELECT 
+        user_id,
+        login_date,
+        DATE_SUB(login_date, INTERVAL rn DAY) AS grp
+    FROM numbered
+)
+SELECT user_id
+FROM grouped
+GROUP BY user_id, grp
+HAVING COUNT(*) >= 5;
+
+
+
+
+
+
+
+
+==================================================================
+👉 Return:
+
+user_id | start_date | end_date | streak_length
+
+
+👉 And only longest streak per user 😈
+

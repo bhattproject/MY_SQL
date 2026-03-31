@@ -1,4 +1,49 @@
+Consecutive Login Days (Streak Problem) Logins(user_id, login_date) 
+  Find users with at least 5 consecutive login days.
 
+  
+==================================================
+user_id | login_date | grp
+--------|------------|------------
+1       | 2024-01-01 | 2023-12-31
+1       | 2024-01-02 | 2023-12-31
+1       | 2024-01-03 | 2023-12-31
+1       | 2024-01-04 | 2023-12-31
+1       | 2024-01-05 | 2023-12-31   ← SAME GROUP ✅
+
+1       | 2024-01-07 | 2024-01-01   ← NEW GROUP ❌
+
+2       | 2024-01-01 | 2023-12-31
+2       | 2024-01-03 | 2024-01-01
+2       | 2024-01-04 | 2024-01-01
+2       | 2024-01-05 | 2024-01-01
+2       | 2024-01-06 | 2024-01-01
+2       | 2024-01-07 | 2024-01-01   ← SAME GROUP ✅
+
+
+
+
+WITH numbered AS (
+    SELECT 
+        user_id,
+        login_date,
+        ROW_NUMBER() OVER (
+            PARTITION BY user_id 
+            ORDER BY login_date
+        ) AS rn
+    FROM Logins
+),
+grouped AS (
+    SELECT 
+        user_id,
+        login_date,
+        DATE_SUB(login_date, INTERVAL rn DAY) AS grp
+    FROM numbered
+)
+SELECT user_id
+FROM grouped
+GROUP BY user_id, grp
+HAVING COUNT(*) >= 5;
 
 
 

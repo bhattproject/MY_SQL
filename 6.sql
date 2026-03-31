@@ -159,6 +159,111 @@ DATE - rn	normalize consecutive dates
 GROUP BY grp	identify streak
 COUNT >= 5	filter valid streak
 
+  Input Table (Logins)
+user_id | login_date
+--------|------------
+1       | 2024-01-01
+1       | 2024-01-01  ← duplicate
+1       | 2024-01-02
+1       | 2024-01-03
+1       | 2024-01-04
+1       | 2024-01-05
+1       | 2024-01-07  ← break
+
+🟡 STEP 1: dedup (Add dup_rn)
+user_id | login_date | dup_rn
+--------|------------|--------
+1       | 2024-01-01 | 1
+1       | 2024-01-01 | 2  ← duplicate marked
+1       | 2024-01-02 | 1
+1       | 2024-01-03 | 1
+1       | 2024-01-04 | 1
+1       | 2024-01-05 | 1
+1       | 2024-01-07 | 1
+
+
+👉 Visual:
+
+Same (user_id, date) → numbering starts from 1
+Only dup_rn = 1 is useful
+🟢 STEP 2: filtered (Remove duplicates)
+user_id | login_date
+--------|------------
+1       | 2024-01-01
+1       | 2024-01-02
+1       | 2024-01-03
+1       | 2024-01-04
+1       | 2024-01-05
+1       | 2024-01-07
+
+
+👉 Now each row = one day
+
+🔵 STEP 3: numbered (Add rn)
+user_id | login_date | rn
+--------|------------|----
+1       | 2024-01-01 | 1
+1       | 2024-01-02 | 2
+1       | 2024-01-03 | 3
+1       | 2024-01-04 | 4
+1       | 2024-01-05 | 5
+1       | 2024-01-07 | 6  ← gap but rn continues
+
+
+👉 Visual:
+
+rn is continuous
+Dates may have gaps → mismatch begins here
+🔴 STEP 4: grouped (Compute grp)
+grp = login_date - rn
+
+user_id | login_date | rn | grp
+--------|------------|----|------------
+1       | 2024-01-01 | 1  | 2023-12-31
+1       | 2024-01-02 | 2  | 2023-12-31
+1       | 2024-01-03 | 3  | 2023-12-31
+1       | 2024-01-04 | 4  | 2023-12-31
+1       | 2024-01-05 | 5  | 2023-12-31
+1       | 2024-01-07 | 6  | 2024-01-01  ← NEW GROUP
+
+💥 KEY VISUAL INSIGHT
+First 5 rows → SAME grp → ONE STREAK
+Last row     → DIFFERENT → NEW STREAK
+
+⚫ STEP 5: Final GROUPING
+GROUP BY user_id, grp
+
+user_id | grp        | count
+--------|------------|-------
+1       | 2023-12-31 | 5  ✅
+1       | 2024-01-01 | 1  ❌
+
+✅ FINAL OUTPUT
+user_id
+--------
+1
+
+🧠 FULL VISUAL FLOW (SUPER IMPORTANT)
+RAW DATA
+   ↓
+DEDUP (mark duplicates)
+   ↓
+FILTER (keep one per day)
+   ↓
+ROW_NUMBER (create sequence)
+   ↓
+DATE - RN (normalize)
+   ↓
+GROUP BY (detect streaks)
+   ↓
+COUNT >= 5 (filter)
+
+🔥 One Visual Trick to Remember Forever
+Dates:        01  02  03  04  05  07
+Row Number:   01  02  03  04  05  06
+Subtract:     XX  XX  XX  XX  XX  YY
+                ↑ SAME → streak
+                         ↑ break
 
 
 

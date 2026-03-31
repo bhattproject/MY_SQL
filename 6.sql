@@ -144,6 +144,20 @@ HAVING COUNT(*) >= 5;
 
 
 
+--------------------------------------------------------
+
+
+
+Actual dates:     1  2  3  5
+Row number:       1  2  3  4
+Date - RN:        X  X  X  Y   ← break happens
+
+  
+ROW_NUMBER (dup)	remove duplicates
+ROW_NUMBER (rn)	create sequence index
+DATE - rn	normalize consecutive dates
+GROUP BY grp	identify streak
+COUNT >= 5	filter valid streak
 
 
 

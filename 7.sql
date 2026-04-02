@@ -1,4 +1,4 @@
-
+'''
 At Least 3 Consecutive Days + Return ALL Streak RANGES
 🧾 Table:
 
@@ -10,6 +10,7 @@ Find all streaks (start_date, end_date) where a user logged in ≥ 3 consecutive
   
 
 ✅ Query:
+  '''
 WITH dedup AS (
     SELECT DISTINCT user_id, login_date
     FROM Logins

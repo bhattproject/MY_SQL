@@ -9,7 +9,7 @@ Logins(user_id, login_date)
 Find all streaks (start_date, end_date) where a user logged in ≥ 3 consecutive days.
   
 
-✅ Query:
+-============================================================================
   
 WITH dedup AS (
     SELECT DISTINCT user_id, login_date

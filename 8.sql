@@ -36,3 +36,22 @@ WHERE minute_difference <= 10;
 Median Google Search Frequency [Google SQL Interview Question]
 Google’s Marketing Team needed to add a simple statistic to their upcoming Superbowl Ad: the median number of searches made per year. You were given a summary table that tells you the number of searches made last year, write a query to report the median searches made per user.
 
+  search_frequency Table:
+
+Column Name	Type
+searches	integer
+num_users	integer
+Input/Output Data:
+Example Input:
+
+searches	num_users
+1	2
+2	2
+3	3
+4	1
+Example Output:
+
+median
+2.5
+
+

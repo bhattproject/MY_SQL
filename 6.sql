@@ -276,3 +276,48 @@ user_id | start_date | end_date | streak_length
 
 👉 And only longest streak per user 😈
 
+----------------------------------------------------------------------
+
+
+CREATE TABLE Logins (
+    login_id   INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT NOT NULL,
+    login_date DATE NOT NULL,
+    INDEX idx_user_login (user_id, login_date)
+);
+
+-- 3. Insert Mixed Test Data
+INSERT INTO Logins (user_id, login_date) VALUES
+(1, '2024-01-01'), (1, '2024-01-02'), (1, '2024-01-03'), (1, '2024-01-04'),
+(2, '2024-01-01'), (2, '2024-01-02'), (2, '2024-01-04'), (2, '2024-01-05'),
+(3, '2024-01-01'), (3, '2024-01-02'), (3, '2024-01-03'), 
+(3, '2024-01-10'), (3, '2024-01-11'), (3, '2024-01-12'), (3, '2024-01-13'),
+(4, '2024-01-01'), (4, '2024-01-01'), (4, '2024-01-02'), (4, '2024-01-03'),
+(5, '2024-01-01'), (5, '2024-01-10');
+
+
+SELECT * FROM Logins;
+
+WITH dedup AS (
+    SELECT DISTINCT user_id, login_date 
+    FROM Logins
+),
+grp AS (
+    SELECT 
+        user_id, 
+        login_date, 
+        DATE_SUB(login_date, INTERVAL ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY login_date) DAY) AS grp_key
+    FROM dedup
+),
+streaks AS (
+    SELECT 
+        user_id, 
+        MIN(login_date) AS start_date, 
+        MAX(login_date) AS end_date, 
+        COUNT(*) AS streak_length -- Changed from 'streak length' to 'streak_length'
+    FROM grp
+    GROUP BY user_id, grp_key
+)
+SELECT * 
+FROM streaks 
+WHERE streak_length >= 3;

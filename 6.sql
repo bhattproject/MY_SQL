@@ -359,3 +359,39 @@ INSERT INTO Logins (user_id, login_date) VALUES
 (3, '2024-01-10'), (3, '2024-01-11'), (3, '2024-01-12'), (3, '2024-01-13'), -- ...and 4-day streak
 (4, '2024-01-01'), (4, '2024-01-01'), (4, '2024-01-02'), (4, '2024-01-03'), -- User 4: Duplicates + 3-day streak
 (5, '2024-01-01'), (5, '2024-01-10'); -- User 5: Single days
+
+
+SELECT * FROM Logins;
+-- 3. The Multi-Layer Query
+
+
+
+WITH dedup AS (
+    -- Layer 1: Remove multiple logins on the same day
+    SELECT DISTINCT user_id, login_date
+    FROM Logins
+),
+grp AS (
+    -- Layer 2: Create a unique 'grp_key' for each consecutive date block
+    SELECT 
+        user_id,
+        login_date,
+        DATE_SUB(login_date, INTERVAL ROW_NUMBER() OVER (
+            PARTITION BY user_id ORDER BY login_date
+        ) DAY) AS grp_key
+    FROM dedup
+),
+streaks AS (
+    -- Layer 3: Calculate the length of every individual streak
+    SELECT 
+        user_id,
+        COUNT(*) AS streak_length
+    FROM grp
+    GROUP BY user_id, grp_key
+)
+-- Final Output: Find the single highest streak per user
+SELECT 
+    user_id, 
+    MAX(streak_length) AS longest_streak
+FROM streaks
+GROUP BY user_id;

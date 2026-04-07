@@ -340,3 +340,22 @@ INSERT INTO Logins (user_id, login_date) VALUES
 (4, '2024-01-01'), (4, '2024-01-01'), (4, '2024-01-02'), (4, '2024-01-03'), -- User 4: Duplicates + 3-day streak
 (5, '2024-01-01'), (5, '2024-01-10'); -- User 5: Single days
 
+----------------------------=================================================================================================
+-- 1. Table Creation
+CREATE TABLE Logins (
+    login_id   INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT NOT NULL,
+    login_date DATE NOT NULL,
+    INDEX idx_user_login (user_id, login_date)
+);
+
+
+
+
+INSERT INTO Logins (user_id, login_date) VALUES
+(1, '2024-01-01'), (1, '2024-01-02'), (1, '2024-01-03'), (1, '2024-01-04'), -- User 1: 4-day streak
+(2, '2024-01-01'), (2, '2024-01-02'), (2, '2024-01-04'), (2, '2024-01-05'), -- User 2: Two 2-day streaks
+(3, '2024-01-01'), (3, '2024-01-02'), (3, '2024-01-03'),                   -- User 3: 3-day streak...
+(3, '2024-01-10'), (3, '2024-01-11'), (3, '2024-01-12'), (3, '2024-01-13'), -- ...and 4-day streak
+(4, '2024-01-01'), (4, '2024-01-01'), (4, '2024-01-02'), (4, '2024-01-03'), -- User 4: Duplicates + 3-day streak
+(5, '2024-01-01'), (5, '2024-01-10'); -- User 5: Single days

@@ -395,3 +395,37 @@ SELECT
     MAX(streak_length) AS longest_streak
 FROM streaks
 GROUP BY user_id;
+-================================================================================================
+HARD VERSION 3: Streak WITH ALLOWED GAP (1 DAY SKIP ALLOWED)
+
+
+Find streaks where users can miss 1 day but still count as continuous
+
+
+Jan 1, Jan 2, Jan 4 → still valid (gap allowed)
+
+
+WITH dedup AS (
+    SELECT DISTINCT user_id, login_date
+    FROM Logins
+),
+grp AS (
+    SELECT 
+        user_id,
+        login_date,
+        DATE_SUB(
+            login_date,
+            INTERVAL FLOOR(
+                ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY login_date) / 2
+            ) DAY
+        ) AS grp_key
+    FROM dedup
+)
+SELECT user_id, COUNT(*) AS streak_length
+FROM grp
+GROUP BY user_id, grp_key
+HAVING COUNT(*) >= 3;
+
+🧠 Why this is HARD:
+Custom grouping logic
+Requires thinking beyond standard “date - row_number”

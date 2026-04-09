@@ -429,3 +429,37 @@ HAVING COUNT(*) >= 3;
 🧠 Why this is HARD:
 Custom grouping logic
 Requires thinking beyond standard “date - row_number”
+=======================================================================================================
+HARD VERSION 4: Consecutive Days WITH MINIMUM ACTIVITY
+
+
+Logins(user_id, login_date, minutes_spent)
+
+
+
+Find users who logged in 3 consecutive days AND spent ≥ 30 mins each day
+
+
+WITH filtered AS (
+    SELECT user_id, login_date
+    FROM Logins
+    WHERE minutes_spent >= 30
+),
+grp AS (
+    SELECT 
+        user_id,
+        login_date,
+        DATE_SUB(login_date, INTERVAL ROW_NUMBER() OVER (
+            PARTITION BY user_id ORDER BY login_date
+        ) DAY) AS grp_key
+    FROM filtered
+)
+SELECT user_id
+FROM grp
+GROUP BY user_id, grp_key
+HAVING COUNT(*) >= 3;
+
+🧠 Twist:
+Filtering BEFORE grouping
+Real-world product analytics scenario
+======================================================================================================

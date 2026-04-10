@@ -468,3 +468,33 @@ HARD VERSION 5: Detect FIRST TIME User Achieves 3-Day Streak
 
 Return the first date when a user completes a 3-day streak
 
+✅ Query:
+WITH dedup AS (
+    SELECT DISTINCT user_id, login_date
+    FROM Logins
+),
+grp AS (
+    SELECT 
+        user_id,
+        login_date,
+        DATE_SUB(login_date, INTERVAL ROW_NUMBER() OVER (
+            PARTITION BY user_id ORDER BY login_date
+        ) DAY) AS grp_key
+    FROM dedup
+),
+streaks AS (
+    SELECT 
+        user_id,
+        MIN(login_date) AS start_date,
+        MAX(login_date) AS end_date,
+        COUNT(*) AS streak_length
+    FROM grp
+    GROUP BY user_id, grp_key
+)
+SELECT user_id, MIN(end_date) AS first_streak_completion
+FROM streaks
+WHERE streak_length >= 3
+GROUP BY user_id;
+
+
+

@@ -463,3 +463,8 @@ HAVING COUNT(*) >= 3;
 Filtering BEFORE grouping
 Real-world product analytics scenario
 ======================================================================================================
+HARD VERSION 5: Detect FIRST TIME User Achieves 3-Day Streak
+❓ Problem:
+
+Return the first date when a user completes a 3-day streak
+

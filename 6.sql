@@ -496,5 +496,81 @@ FROM streaks
 WHERE streak_length >= 3
 GROUP BY user_id;
 
+===========================================================
+ULTRA HARD PROBLEM: Multi-Dimensional Login Streak (FAANG Level)
+🧾 Table:
+
+Logins(user_id, login_date, device)
+
+❓ Problem:
+
+Find users who have a streak of ≥ 3 consecutive days
+👉 BUT with these constraints:
+
+Logins must be on the same device
+No duplicate days (handle duplicates)
+Return:
+user_id
+device
+start_date
+end_date
+streak_length
+✅ FINAL QUERY
+WITH dedup AS (
+    SELECT DISTINCT user_id, login_date, device
+    FROM Logins
+),
+
+grp AS (
+    SELECT 
+        user_id,
+        device,
+        login_date,
+        DATE_SUB(
+            login_date,
+            INTERVAL ROW_NUMBER() OVER (
+                PARTITION BY user_id, device 
+                ORDER BY login_date
+            ) DAY
+        ) AS grp_key
+    FROM dedup
+),
+
+streaks AS (
+    SELECT 
+        user_id,
+        device,
+        MIN(login_date) AS start_date,
+        MAX(login_date) AS end_date,
+        COUNT(*) AS streak_length
+    FROM grp
+    GROUP BY user_id, device, grp_key
+)
+
+SELECT *
+FROM streaks
+WHERE streak_length >= 3
+ORDER BY user_id, device, start_date;
+
+🧠 STEP-BY-STEP DEEP EXPLANATION
+🔹 STEP 1: REMOVE DUPLICATES
+SELECT DISTINCT user_id, login_date, device
+
+
+👉 Why?
+
+Same user may log in multiple times a day
+That would break streak logic
+🔹 STEP 2: APPLY CORE TRICK (GAPS & ISLANDS)
+ROW_NUMBER() OVER (PARTITION BY user_id, device ORDER BY login_date)
+
+
+👉 This does:
+
+Separate streaks per user + device
+Orders dates
+Assigns sequence numbers
+🔹 STEP 3: MAGIC FORMULA
+login_date - row_number
 
 

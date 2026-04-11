@@ -573,4 +573,27 @@ Assigns sequence numbers
 🔹 STEP 3: MAGIC FORMULA
 login_date - row_number
 
+👉 WHY THIS WORKS:
+
+login_date	row_number	result
+Jan 1	1	Jan 0
+Jan 2	2	Jan 0
+Jan 3	3	Jan 0
+
+👉 SAME VALUE ⇒ SAME GROUP = consecutive days
+
+🔹 STEP 4: GROUP INTO STREAKS
+GROUP BY user_id, device, grp_key
+
+
+👉 Each group = one streak
+
+🔹 STEP 5: EXTRACT STREAK INFO
+MIN(login_date) → start
+MAX(login_date) → end
+COUNT(*) → length
+
+🔹 STEP 6: FILTER VALID STREAKS
+WHERE streak_length >= 3
+
 

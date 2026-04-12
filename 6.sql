@@ -497,7 +497,7 @@ WHERE streak_length >= 3
 GROUP BY user_id;
 
 ===========================================================
-ULTRA HARD PROBLEM: Multi-Dimensional Login Streak (FAANG Level)
+'''ULTRA HARD PROBLEM: Multi-Dimensional Login Streak (FAANG Level)
 🧾 Table:
 
 Logins(user_id, login_date, device)
@@ -516,6 +516,8 @@ start_date
 end_date
 streak_length
 ✅ FINAL QUERY
+
+  '''
 WITH dedup AS (
     SELECT DISTINCT user_id, login_date, device
     FROM Logins

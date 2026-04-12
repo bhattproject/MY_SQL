@@ -565,7 +565,6 @@ That would break streak logic
 ROW_NUMBER() OVER (PARTITION BY user_id, device ORDER BY login_date)
 
 
-👉 This does:
 
 Separate streaks per user + device
 Orders dates
@@ -573,7 +572,7 @@ Assigns sequence numbers
 🔹 STEP 3: MAGIC FORMULA
 login_date - row_number
 
-👉 WHY THIS WORKS:
+
 
 login_date	row_number	result
 Jan 1	1	Jan 0

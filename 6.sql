@@ -553,7 +553,7 @@ SELECT *
 FROM streaks
 WHERE streak_length >= 3
 ORDER BY user_id, device, start_date;
-
+'''
 🧠 STEP-BY-STEP DEEP EXPLANATION
 🔹 STEP 1: REMOVE DUPLICATES
 SELECT DISTINCT user_id, login_date, device

@@ -18,3 +18,15 @@ Top N Records per GroupProblem: Find the top 2 highest-paid employees in each de
     FROM Employees
 )
 SELECT * FROM RankedEmployees WHERE rnk <= 2;
+
+
+ Detecting Gaps and Islands (Streaks)Problem: Find the longest streak of consecutive days a user has logged in.Concept: Use a difference of row numbers to group consecutive dates together. By subtracting a sequence (ROW_NUMBER) from the date, all consecutive dates will result in the same "anchor date."sqlWITH GroupedLogins AS (
+    SELECT user_id, login_date,
+           login_date - ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY login_date) AS grp
+    FROM Logins
+)
+SELECT user_id, COUNT(*) AS streak_length
+FROM GroupedLogins
+GROUP BY user_id, grp
+ORDER BY streak_length DESC
+LIMIT 1;

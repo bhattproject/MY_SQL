@@ -30,3 +30,15 @@ FROM GroupedLogins
 GROUP BY user_id, grp
 ORDER BY streak_length DESC
 LIMIT 1;
+
+Problem: Given a table with employee_id and manager_id, list all employees and their "level" in the company hierarchy (CEO = Level 1).Concept: Use a Recursive CTE to traverse parent-child relationships.sqlWITH RECURSIVE OrgChart AS (
+    -- Anchor: Find the person with no manager (the CEO)
+    SELECT employee_id, name, 1 AS level
+    FROM Employees WHERE manager_id IS NULL
+    UNION ALL
+    -- Recursion: Join employees to their managers already in the chart
+    SELECT e.employee_id, e.name, oc.level + 1
+    FROM Employees e
+    JOIN OrgChart oc ON e.manager_id = oc.employee_id
+)
+SELECT * FROM OrgChart;

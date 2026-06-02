@@ -74,4 +74,17 @@ emp_id	emp_name	salary	manager_id
 
 Query:
   '''
+SELECT e.emp_name
+FROM Employee e
+JOIN Employee m
+    ON e.manager_id = m.emp_id
+WHERE e.salary > m.salary;
+'''
+Output
+emp_name
+Sarah
+
+Because Sarah's salary (9000) is greater than her manager John's salary (8000).
+
+
 

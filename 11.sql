@@ -50,3 +50,28 @@ The query returns 6000.
 Follow-up Interview Question
 Find the Nth Highest Salary
   '''
+SELECT salary
+FROM (
+    SELECT salary,
+           DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM Employee
+) t
+WHERE rnk = N;
+
+'''
+Replace N with the required rank (e.g., 3 for third highest salary).
+
+Another Popular SQL Interview Problem
+Find Employees Earning More Than Their Manager
+
+Table:
+
+emp_id	emp_name	salary	manager_id
+1	John	8000	NULL
+2	Mike	6000	1
+3	Sarah	9000	1
+4	Tom	5000	2
+
+Query:
+  '''
+

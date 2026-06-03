@@ -84,6 +84,13 @@ Output
 emp_name
 Sarah
 
+  : Compute Daily Active Users (DAU)
+SELECT 
+    activity_date,
+    COUNT(DISTINCT user_id) AS dau
+FROM user_activity
+GROUP BY activity_date;
+
 Because Sarah's salary (9000) is greater than her manager John's salary (8000).
 
 

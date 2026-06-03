@@ -95,4 +95,32 @@ GROUP BY activity_date;
 Because Sarah's salary (9000) is greater than her manager John's salary (8000).
 
 
+  Step 2: Self-Join to Find Next-Day Retention
+
+We match users active on day D with users active on day D+1.
+
+WITH daily_users AS (
+    SELECT DISTINCT user_id, activity_date
+    FROM user_activity
+),
+
+retention AS (
+    SELECT
+        d1.activity_date,
+        COUNT(DISTINCT d1.user_id) AS dau,
+        COUNT(DISTINCT d2.user_id) AS retained_users
+    FROM daily_users d1
+    LEFT JOIN daily_users d2
+        ON d1.user_id = d2.user_id
+        AND d2.activity_date = DATE_ADD(d1.activity_date, INTERVAL 1 DAY)
+    GROUP BY d1.activity_date
+)
+
+SELECT
+    activity_date,
+    dau,
+    ROUND(retained_users * 100.0 / dau, 2) AS next_day_retention
+FROM retention
+ORDER BY activity_date;
+
 

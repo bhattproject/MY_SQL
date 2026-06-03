@@ -85,6 +85,7 @@ emp_name
 Sarah
 
   : Compute Daily Active Users (DAU)
+  '''
 SELECT 
     activity_date,
     COUNT(DISTINCT user_id) AS dau

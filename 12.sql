@@ -62,3 +62,27 @@ GroupFlags AS (
         END AS is_new_group
     FROM LaggedData
 ),
+GroupIDs AS (
+    -- Step 3: Running sum of flags creates a unique ID for each overlapping block
+    SELECT 
+        user_id,
+        start_time,
+        end_time,
+        SUM(is_new_group) OVER (
+            PARTITION BY user_id 
+            ORDER BY start_time, end_time
+        ) AS group_id
+    FROM GroupFlags
+)
+-- Step 4: Group by the unique block ID and find min/max boundaries
+SELECT 
+    user_id,
+    MIN(start_time) AS merged_start_time,
+    MAX(end_time) AS merged_end_time
+FROM GroupIDs
+GROUP BY 
+    user_id, 
+    group_id
+ORDER BY 
+    user_id, 
+    merged_start_time;

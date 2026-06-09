@@ -29,3 +29,36 @@ GROUP BY
     streak_anchor
 HAVING 
     COUNT(*) >= 3;
+
+
+
+
+
+
+
+WITH LaggedData AS (
+    -- Step 1: Find the maximum end time seen so far up to the PREVIOUS row
+    SELECT 
+        user_id,
+        start_time,
+        end_time,
+        MAX(end_time) OVER (
+            PARTITION BY user_id 
+            ORDER BY start_time, end_time
+            ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+        ) AS max_prev_end_time
+    FROM user_sessions
+),
+GroupFlags AS (
+    -- Step 2: If start_time is greater than the previous max end_time, flag a new group (1)
+    SELECT 
+        user_id,
+        start_time,
+        end_time,
+        CASE 
+            WHEN max_prev_end_time IS NULL THEN 1  -- First row starts group 1
+            WHEN start_time > max_prev_end_time THEN 1 -- Gap found! Starts a new group
+            ELSE 0 
+        END AS is_new_group
+    FROM LaggedData
+),

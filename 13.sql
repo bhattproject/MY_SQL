@@ -15,3 +15,6 @@ FROM (
 GROUP BY user1, user2;
 
 
+The Active User Retention Retention Gap 
+Question 1: The Active User Retention Retention Gap (Meta/Google Level)📋 ScenarioYou are given a table named user_actions that logs user interactions on a platform.Table Schema (user_actions):user_id (INT)action_date (DATE)action_type (VARCHAR) — e.g., 'login', 'post', 'like' The ChallengeWrite a SQL query to find "Consecutive Active Users". A consecutive active user is defined as someone who performed at least one action on 3 or more consecutive days.Return a unique list of user_ids who meet this criterion.
+

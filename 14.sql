@@ -54,3 +54,5 @@ SELECT
     MAX(streak_length) AS longest_streak
 FROM StreakCounts
 GROUP BY user_id;
+
+=========================================================================================================

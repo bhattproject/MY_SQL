@@ -19,3 +19,10 @@ sqlWITH RankedTransactions AS (
 SELECT COUNT(*) AS payment_count
 FROM RankedTransactions
 WHERE transaction_timestamp <= previous_transaction_time + INTERVAL '10 minutes';
+
+
+=================================================================================================
+
+Question 2: User Active Streaks / Gaps & Islands (Meta / Uber)Concept: Row Numbers, Gap Detection, and Continuous Sequence Tracking.Problem StatementGiven a table 
+  tracking daily user logins, write a query to find the longest consecutive login streak for each user.Schema (user_logins)user_id (INT)login_date (DATE)
+

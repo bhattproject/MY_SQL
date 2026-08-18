@@ -40,11 +40,13 @@ Explanation of the StepsDepartmentStats (CTE): Calculates the average salary for
   . If there is a tie for the highest salary, both employees get a rank of 1.Final SELECT: Joins the two CTEs and the departments table together. It filters for
   salary_rank = 1 to target only the top earners, and subtracts the department average from the employee's salary to get the exact financial gap.
 
+  2 apporach
   
 
   Instead of using multiple temporary tables (CTEs), this approach uses Correlated Subqueries. This means we use a small query inside our main query to
   look up the favorite product for each customer.
    The Alternative SQL Solutionsql-- Step 1: Get the customer details and their grand total spend
+  
 SELECT 
     c.customer_id,
     c.first_name,
@@ -52,6 +54,7 @@ SELECT
     SUM(oi.quantity * oi.price_per_unit) AS grand_total_spend,
     
     -- Step 2: Use a subquery to find the name of the top product
+  
     (
         SELECT oi2.product_name
         FROM orders o2
@@ -63,6 +66,7 @@ SELECT
     ) AS favorite_product,
 
     -- Step 3: Use a subquery to find the amount spent on that top product
+  
     (
         SELECT SUM(oi3.quantity * oi3.price_per_unit)
         FROM orders o3
@@ -77,6 +81,8 @@ FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
 JOIN order_items oi ON o.order_id = oi.order_id
 GROUP BY c.customer_id, c.first_name, c.last_name
+  
 -- Step 4: Filter out customers who spent $500 or less
+  
 HAVING SUM(oi.quantity * oi.price_per_unit) > 500
 ORDER BY grand_total_spend DESC;

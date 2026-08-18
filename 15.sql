@@ -39,3 +39,8 @@ Explanation of the StepsDepartmentStats (CTE): Calculates the average salary for
   to compare against.RankedEmployees (CTE): Uses the DENSE_RANK() window function. It partitions the dataset by dept_id and ranks salaries from highest to lowest
   . If there is a tie for the highest salary, both employees get a rank of 1.Final SELECT: Joins the two CTEs and the departments table together. It filters for
   salary_rank = 1 to target only the top earners, and subtracts the department average from the employee's salary to get the exact financial gap.
+
+  
+
+  Instead of using multiple temporary tables (CTEs), this approach uses Correlated Subqueries. This means we use a small query inside our main query to
+  look up the favorite product for each customer.
